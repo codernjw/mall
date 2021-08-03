@@ -1,16 +1,16 @@
 <template>
   <div>
-<Tabbar/>
+    <router-view></router-view>
+<maintabbaritem></maintabbaritem>
   </div>
 </template>
 
 <script>
-import Tabbar from './components/tabbar/Tabbar.vue'
+import maintabbaritem from './components/content/maintabbar/maintabbar.vue'
+
 export default {
 name:'APP',
-components: {
-  Tabbar,
-}
+components: { maintabbaritem },
 }
 </script>
 
