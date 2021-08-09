@@ -50,7 +50,7 @@ props: {
 .goods-item .price{
     color: pink;
     margin-left: 30px;
-    margin-right: 25px;
+    margin-right: 24px;
 }
 .cfav{
     position: relative;
