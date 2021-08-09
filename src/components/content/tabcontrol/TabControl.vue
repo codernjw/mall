@@ -25,6 +25,7 @@ data(){
 methods: {
     barclick(index){
         this.apple=index;
+        this.$emit('tabclick',index)
     }
 }
 }
@@ -34,6 +35,7 @@ methods: {
 .trol{
     display: flex;
     text-align: center;
+    z-index: 99;
 }
 .con{
     flex: 1;
