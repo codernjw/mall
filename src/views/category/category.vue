@@ -129,7 +129,7 @@ export default {
     });
     this.scroll.on("pullingUp", () => {
       console.log("上拉加载更多");
-      // 执行一次上拉加载更多命令后，关闭上拉加载更多，然后又重新调用
+      // 执行一次上拉加载更多命令后，关闭上拉加载更多，然后又重新调用。
       setTimeout(()=>{
         this.scroll.finishPullUp();
       },2000)
