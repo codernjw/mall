@@ -176,7 +176,7 @@ export default {
     tabclick(index) {
       this.currtype = index < 1 ? "pop" : index == 1 ? "new" : "sell";
     },
-    // 网络请求
+    // 网络请求.
     gethomemultidata() {
       gethomemultidata().then((res) => {
         this.banner = res.data.banner.list;
