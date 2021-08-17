@@ -190,7 +190,7 @@ export default {
       });
     },
     backclick() {
-      this.$refs.scroll.scrollTo(0, 0);
+      this.$refs.scroll.scrollTo(0, 0 ,500);
     },
   },
 };
