@@ -7,7 +7,14 @@
         <template v-slot:right> </template>
       </Navbar>
     </div>
-    <scroll class="gun" ref="scroll">
+    <scroll
+      class="gun"
+      ref="scroll"
+      :position="3"
+      @scroll="conitscroll"
+      :pullupload="true"
+      @upload='loadmore'
+    >
       <home-swiper :banner="banner" class="head"></home-swiper>
       <recommend :recommend="recommend"></recommend>
       <fature-view></fature-view>
@@ -18,7 +25,7 @@
       ></tab-control>
       <goods :goodslist="showgoods"></goods>
     </scroll>
-    <back-top @click="backclick"></back-top>
+    <back-top @click="backclick" v-show="top"></back-top>
   </div>
 </template>
 
@@ -57,6 +64,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currtype: "pop",
+      top: false,
     };
   },
   created() {
@@ -85,11 +93,19 @@ export default {
       gethomegoods(type, page).then((res) => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+        this.$refs.scroll.finishpullup();
       });
     },
     backclick() {
-      this.$refs.scroll.scrollTo(0, 0 ,500);
+      this.$refs.scroll.scrollTo(0, 0, 500);
     },
+    conitscroll(position) {
+      // console.log(position);
+      position.y <= -1000 ? (this.top = true) : (this.top = false);
+    },
+    loadmore(){
+      this.gethomegoods(this.currtype)
+    }
   },
 };
 </script>
