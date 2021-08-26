@@ -36,6 +36,9 @@ methods: {
     display: flex;
     text-align: center;
     z-index: 99;
+    color:black;
+    background-color: #ffffff;
+    /* background-color:whitesmoke; */
 }
 .con{
     flex: 1;

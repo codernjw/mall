@@ -1,11 +1,18 @@
 <template>
   <div class="headone">
     <div class="home">
-      <Navbar>
+      <Navbar class="li">
         <template v-slot:left> </template>
         <template v-slot:center> 购物街 </template>
         <template v-slot:right> </template>
       </Navbar>
+      <tab-control
+        :title="['流行', '新款', '精选']"
+        @tabclick="tabclick"
+         ref="tabcontrol1"
+        v-show="istabfixed"
+        class="fixedd"
+      ></tab-control>
     </div>
     <scroll
       class="gun"
@@ -13,15 +20,19 @@
       :position="3"
       @scroll="conitscroll"
       :pullupload="true"
-      @upload='loadmore'
+      @upload="loadmore"
     >
-      <home-swiper :banner="banner" class="head"></home-swiper>
+      <home-swiper
+        :banner="banner"
+        class="head"
+        @swiperimageload="swiperimageload"
+      ></home-swiper>
       <recommend :recommend="recommend"></recommend>
       <fature-view></fature-view>
       <tab-control
         :title="['流行', '新款', '精选']"
-        class="tab-control"
         @tabclick="tabclick"
+        ref="tabcontrol2"
       ></tab-control>
       <goods :goodslist="showgoods"></goods>
     </scroll>
@@ -65,6 +76,8 @@ export default {
       },
       currtype: "pop",
       top: false,
+      taboffsettop: "",
+      istabfixed: false,
     };
   },
   created() {
@@ -81,6 +94,8 @@ export default {
   methods: {
     tabclick(index) {
       this.currtype = index < 1 ? "pop" : index == 1 ? "new" : "sell";
+      this.$refs.tabcontrol1.apple=index;
+      this.$refs.tabcontrol2.apple=index;
     },
     gethomemultidata() {
       gethomemultidata().then((res) => {
@@ -102,23 +117,31 @@ export default {
     conitscroll(position) {
       // console.log(position);
       position.y <= -1000 ? (this.top = true) : (this.top = false);
+      this.istabfixed = -position.y >= this.taboffsettop;
+      console.log(this.istabfixed);
     },
-    loadmore(){
-      this.gethomegoods(this.currtype)
-    }
+    loadmore() {
+      this.gethomegoods(this.currtype);
+    },
+    swiperimageload() {
+      this.taboffsettop = this.$refs.tabcontrol2.$el.offsetTop;
+      //  console.log(this.taboffsettop);
+    },
   },
 };
 </script>
 
 <style>
 .home {
-  background-color: #ea68a2;
   color: aliceblue;
-  position: fixed;
+  /* position: fixed;
   left: 0;
   right: 0;
   top: 0;
-  z-index: 999;
+  z-index: 999; */
+}
+.li {
+  background-color: #ea68a2;
 }
 .headone {
   height: 100vh;
@@ -127,16 +150,16 @@ export default {
 .head {
   margin-top: 44px;
 }
-.tab-control {
-  position: sticky;
-  top: 44px;
-  background-color: #fff;
-}
 .gun {
   position: absolute;
   top: 44px;
   bottom: 49px;
   left: 0;
   right: 0;
+  overflow: hidden;
+}
+.fixedd {
+  position: relative;
+  z-index: 9;
 }
 </style>
