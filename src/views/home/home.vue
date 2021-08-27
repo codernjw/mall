@@ -9,7 +9,7 @@
       <tab-control
         :title="['流行', '新款', '精选']"
         @tabclick="tabclick"
-         ref="tabcontrol1"
+        ref="tabcontrol1"
         v-show="istabfixed"
         class="fixedd"
       ></tab-control>
@@ -27,7 +27,7 @@
         class="head"
         @swiperimageload="swiperimageload"
       ></home-swiper>
-      <recommend :recommend="recommend"></recommend>
+      <recommend :recommend="recommend" ref="goods"></recommend>
       <fature-view></fature-view>
       <tab-control
         :title="['流行', '新款', '精选']"
@@ -78,6 +78,7 @@ export default {
       top: false,
       taboffsettop: "",
       istabfixed: false,
+      savey: 0,
     };
   },
   created() {
@@ -91,11 +92,18 @@ export default {
       return this.goods[this.currtype].list;
     },
   },
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.savey, 1);
+    this.$refs.scroll.scroll.refresh();
+  },
+  deactivated() {
+    this.savey = this.$refs.scroll.scroll.y;
+  },
   methods: {
     tabclick(index) {
       this.currtype = index < 1 ? "pop" : index == 1 ? "new" : "sell";
-      this.$refs.tabcontrol1.apple=index;
-      this.$refs.tabcontrol2.apple=index;
+      this.$refs.tabcontrol1.apple = index;
+      this.$refs.tabcontrol2.apple = index;
     },
     gethomemultidata() {
       gethomemultidata().then((res) => {
@@ -108,7 +116,7 @@ export default {
       gethomegoods(type, page).then((res) => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
-        this.$refs.scroll.finishpullup();
+        this.$refs.scroll.finishpull();
       });
     },
     backclick() {
@@ -117,8 +125,8 @@ export default {
     conitscroll(position) {
       // console.log(position);
       position.y <= -1000 ? (this.top = true) : (this.top = false);
-      this.istabfixed = -position.y >= this.taboffsettop;
-      console.log(this.istabfixed);
+      this.istabfixed = -position.y >= this.taboffsettop + 44;
+      // console.log(this.istabfixed);
     },
     loadmore() {
       this.gethomegoods(this.currtype);
