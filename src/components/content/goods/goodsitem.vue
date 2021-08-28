@@ -1,5 +1,5 @@
 <template>
-  <div class="goods">
+  <div class="goods" @click="itemclick">
       <img :src="goodslistitem.show.img" alt="">
       <div class="goods-item">
               <p>{{goodslistitem.title}}</p>
@@ -18,6 +18,12 @@ props: {
         defalut(){
             return {}
         }
+    }
+},
+methods: {
+    itemclick(){
+        // console.log('dianji');
+        this.$router.push('/detali/'+this.goodslistitem.iid)
     }
 }
 }

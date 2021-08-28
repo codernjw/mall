@@ -32,6 +32,12 @@ const routes = [{
         component: () =>
             import ('../views/porfile/porfile.vue')
     },
+    {
+        path: '/detali/:iid',
+        name: 'detali',
+        component: () =>
+            import ('../views/detali/detali.vue')
+    },
 ]
 
 const router = createRouter({
