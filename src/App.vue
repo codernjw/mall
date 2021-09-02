@@ -8,7 +8,7 @@
         <component :is="Component" />
       </keep-alive>
     </router-view>
-    <maintabbaritem></maintabbaritem>
+    <maintabbaritem v-if="$route.meta.footShow"></maintabbaritem>
   </div>
 </template>
 

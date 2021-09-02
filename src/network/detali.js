@@ -29,3 +29,25 @@ export class Shop {
         this.goodsCount = shopInfo.cGoods;
     }
 }
+export class GoodsParam {
+    constructor(info, rule) {
+        this.image = info.image ? info.image[0] : '';
+        this.infos = info.set;
+        this.sizes = rule.tables;
+    }
+}
+export class comment {
+    constructor(list) {
+        this.content = list[0].content;
+        this.created = list[0].created;
+        this.style = list[0].style;
+        this.avatar = list[0].user.avatar;
+        this.uname = list[0].user.uname;
+        this.images = list[0].images
+    }
+}
+export function getRecommend() {
+    return request({
+        url: '/recommend'
+    })
+}

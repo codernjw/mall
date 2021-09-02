@@ -1,103 +1,93 @@
 <template>
-  <div>
-     <detalinavbar></detalinavbar>
-     <detaliswiper :topimage="topimage"></detaliswiper>
-     <detalibaseinfo :goods="goods"></detalibaseinfo>
-     <detail-shop-info :shop="shop"></detail-shop-info>
-        <ul>
-       <li>1</li>
-       <li>2</li>
-       <li>3</li>
-       <li>4</li>
-       <li>5</li>
-       <li>6</li>
-       <li>7</li>
-       <li>8</li>
-       <li>9</li>
-       <li>10</li>
-       <li>11</li>
-       <li>12</li>
-       <li>13</li>
-       <li>14</li>
-       <li>15</li>
-       <li>16</li>
-       <li>17</li>
-       <li>18</li>
-       <li>19</li>
-       <li>20</li>
-       <li>21</li>
-       <li>22</li>
-       <li>23</li>
-       <li>24</li>
-       <li>25</li>
-       <li>26</li>
-       <li>27</li>
-       <li>28</li>
-       <li>29</li>
-       <li>30</li>
-       <li>31</li>
-       <li>32</li>
-       <li>33</li>
-       <li>34</li>
-       <li>35</li>
-       <li>36</li>
-       <li>37</li>
-       <li>38</li>
-       <li>39</li>
-       <li>40</li>
-       <li>41</li>
-       <li>42</li>
-       <li>43</li>
-       <li>44</li>
-       <li>45</li>
-       <li>46</li>
-       <li>47</li>
-       <li>48</li>
-       <li>49</li>
-       <li>50</li>
-   </ul>
+  <div class="lmy">
+    <detalinavbar class="detali-bar"></detalinavbar>
+    <scroll class="content">
+       <detaliswiper :topimage="topimage"></detaliswiper>
+    <detalibaseinfo :goods="goods"></detalibaseinfo>
+    <detail-shop-info :shop="shop"></detail-shop-info>
+    <detail-goods-info :detail-info="detailInfo"></detail-goods-info>
+    <detail-param-info :param-info='goodsparam'></detail-param-info>
+    <detail-comment-info :comment-info='commentinfo'></detail-comment-info>
+    <detail-recommend-info :recommend-list="recommendList"></detail-recommend-info>
+    </scroll>
   </div>
 </template>
 
 <script>
-import detalinavbar from '../detali/childcomps/detalinavbar.vue'
-import detaliswiper from './childcomps/detaliswiper.vue'
-import detalibaseinfo from './childcomps/detalibaseinfo.vue'
-import DetailShopInfo from './childcomps/DetailShopInfo.vue'
+import detalinavbar from "../detali/childcomps/detalinavbar.vue";
+import detaliswiper from "./childcomps/detaliswiper.vue";
+import detalibaseinfo from "./childcomps/detalibaseinfo.vue";
+import DetailShopInfo from "./childcomps/DetailShopInfo.vue";
+import scroll from '../../components/common/scroll/scroll.vue'
+import DetailGoodsInfo from './childcomps/DetailGoodsInfo.vue'
+import DetailParamInfo from './childcomps/DetailParamInfo.vue'
+import DetailCommentInfo from './childcomps/DetailCommentInfo.vue'
+import DetailRecommendInfo from './childcomps/DetailRecommendInfo.vue'
 
-import {getdetali,Goods ,Shop} from '../../network/detali'
+import { getdetali, Goods, GoodsParam, Shop, comment,getRecommend} from "../../network/detali";
 
 export default {
-name:'detali',
-components: {
-   detalinavbar,
-   detaliswiper,
-   detalibaseinfo,
-   DetailShopInfo,
-},
-data(){
+  name: "detali",
+  components: {
+    detalinavbar,
+    detaliswiper,
+    detalibaseinfo,
+    DetailShopInfo,
+    scroll,
+    DetailGoodsInfo,
+    DetailParamInfo,
+    DetailCommentInfo,
+    DetailRecommendInfo,
+  },
+  data() {
     return {
-        iid:null,
-        topimage:[],
-        goods:{},
-        shop:{},
-    }
-},
-created () {
-    this.iid=this.$route.params.iid;
-    getdetali(this.iid).then(res=>{
-        const data=res.result;
-       this.topimage=data.itemInfo.topImages;
-    //    console.log(res);
-       this.goods=new Goods(data.itemInfo,data.columns,data.shopInfo.services);
-    //    console.log(this.goods);
-       this.shop=new Shop(data.shopInfo);
-       console.log(this.shop);
-    })
-},
-}
+      iid: null,
+      topimage: [],
+      goods: {},
+      shop: {},
+      detailInfo:{},
+      goodsparam:{},
+      commentinfo:{},
+      recommendList: [],
+    };
+  },
+  created() {
+    this.iid = this.$route.params.iid;
+    getdetali(this.iid).then((res) => {
+      const data = res.result;
+      this.topimage = data.itemInfo.topImages;
+         // console.log(res);
+      this.goods = new Goods(
+        data.itemInfo,
+        data.columns,
+        data.shopInfo.services
+      );
+      //    console.log(this.goods);
+      this.shop = new Shop(data.shopInfo);
+      // console.log(this.shop);
+      this.detailInfo=data.detailInfo;
+      this.goodsparam=new GoodsParam(data.itemParams.info,data.itemParams.rule);
+      this.commentinfo=new comment(data.rate.list);
+    });
+    getRecommend().then((res, error) => {
+          if (error) return
+          this.recommendList = res.data.list
+          console.log(this.recommendList);
+        })
+  },
+};
 </script>
 
 <style>
-
+.lmy{
+   height: 100vh;
+}
+.detali-bar{
+   position: relative;
+   z-index: 9;
+   background-color: #fff;
+}
+.content{
+height: calc(100% - 44px);
+}
 </style>
