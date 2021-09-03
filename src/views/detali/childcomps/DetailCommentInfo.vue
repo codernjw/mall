@@ -15,8 +15,8 @@
       <div class="info-detail">
         <p>{{commentInfo.content}}</p>
         <div class="info-other">
-          <!-- <span class="date">{{showDate(commentInfo.created)}}</span> -->
-          <span>{{commentInfo.created}}</span>
+          <span class="date">{{showDate(commentInfo.created)}}</span>
+          <!-- <span>{{commentInfo.created}}</span> -->
           <span>{{commentInfo.style}}</span>
         </div>
         <div class="info-imgs">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  // import {formatDate} from "@/common/utils";
+  import {formatDate} from "../../../common/uuntils";
 
   export default {
 		name: "DetailCommentInfo",
@@ -37,12 +37,12 @@
 		    type: Object,
       }
     },
-    // methods: {
-		//   showDate: function (value) {
-    //     let date = new Date(value*1000);
-    //     return formatDate(date, 'yyyy-MM-dd')
-    //   }
-    // }
+    methods: {
+		  showDate: function (value) {
+        let date = new Date(value*1000);
+        return formatDate(date, 'yyyy-MM-dd hh:mm:ss')
+      }
+    }
 	}
 </script>
 

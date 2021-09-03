@@ -19,9 +19,9 @@
         default: {}
       }
     },
-    mounted: function () {
-      // console.log(this.goods);
-    },
+    // mounted: function () {
+    //   console.log(this.goods);
+    // },
     methods: {
       goToDetail: function () {
         // 1.获取iid
@@ -29,6 +29,7 @@
 
         // // 2.跳转到详情页面
         //  this.$router.push({path: '/detail', query: {iid}})
+        // this.$router.push('/detali/'+this.goods.item_id)
       }
     },
     computed: {

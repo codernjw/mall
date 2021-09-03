@@ -41,6 +41,7 @@ export default {
   methods: {
     detaliclick(index) {
       this.currentindex = index;
+      this.$emit('titleclick',index)
     },
     backclick() {
       this.$router.back();

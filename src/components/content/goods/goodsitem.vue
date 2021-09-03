@@ -1,6 +1,6 @@
 <template>
   <div class="goods" @click="itemclick">
-      <img :src="goodslistitem.show.img" alt="">
+      <img :src="getImg" alt="">
       <div class="goods-item">
               <p>{{goodslistitem.title}}</p>
           <span class="price">{{goodslistitem.price}}</span>
@@ -20,6 +20,11 @@ props: {
         }
     }
 },
+computed: {
+      getImg() {
+        return  this.goodslistitem.image || this.goodslistitem.show.img
+      }
+    },
 methods: {
     itemclick(){
         // console.log('dianji');
