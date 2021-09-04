@@ -45,13 +45,14 @@ import Navbar from "../../components/common/navbar/Navbar.vue";
 import TabControl from "../../components/content/tabcontrol/TabControl.vue";
 import goods from "../../components/content/goods/goods.vue";
 import scroll from "../../components/common/scroll/scroll.vue";
-import BackTop from "../../components/content/backtop/BackTop.vue";
+// import BackTop from "../../components/content/backtop/BackTop.vue";
 
 import HomeSwiper from "./childcomps/HomeSwiper.vue";
 import Recommend from "./childcomps/Recommend.vue";
 import FatureView from "./childcomps/fatureview.vue";
 
-import { gethomemultidata, gethomegoods } from "../../network/home";
+import { gethomemultidata, gethomegoods} from "../../network/home";
+import {backtop} from '../../common/mixin'
 export default {
   name: "home",
   components: {
@@ -59,12 +60,13 @@ export default {
     TabControl,
     goods,
     scroll,
-    BackTop,
+    // BackTop,
 
     HomeSwiper,
     Recommend,
     FatureView,
   },
+  mixins: [backtop],
   data() {
     return {
       banner: [],
@@ -75,7 +77,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currtype: "pop",
-      top: false,
+      // top: false,
       taboffsettop: "",
       istabfixed: false,
       savey: 0,
@@ -119,12 +121,13 @@ export default {
         this.$refs.scroll.finishpull();
       });
     },
-    backclick() {
-      this.$refs.scroll.scrollTo(0, 0, 500);
-    },
+    // backclick() {
+    //   this.$refs.scroll.scrollTo(0, 0, 500);
+    // },
     conitscroll(position) {
       // console.log(position);
-      position.y <= -1000 ? (this.top = true) : (this.top = false);
+      // position.y <= -1000 ? (this.top = true) : (this.top = false);
+      this.topmixin(position);
       this.istabfixed = -position.y >= this.taboffsettop + 44;
       // console.log(this.istabfixed);
     },

@@ -1,6 +1,6 @@
 <template>
   <div class="goods" @click="itemclick">
-      <img :src="getImg" alt="">
+      <img :src="getImg" alt="" @load="imgload">
       <div class="goods-item">
               <p>{{goodslistitem.title}}</p>
           <span class="price">{{goodslistitem.price}}</span>
@@ -29,6 +29,10 @@ methods: {
     itemclick(){
         // console.log('dianji');
         this.$router.push('/detali/'+this.goodslistitem.iid)
+    },
+    imgload(){
+        // this.$bus.$emit('itemimgload')
+        this.$emit('itemimgload')
     }
 }
 }

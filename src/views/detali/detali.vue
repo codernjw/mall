@@ -1,23 +1,38 @@
 <template>
   <div class="lmy">
-    <detalinavbar class="detali-bar" @titleclick="tmclick"></detalinavbar>
-    <scroll class="content" ref="scroll">
+    <detalinavbar
+      class="detali-bar"
+      @titleclick="tmclick"
+      ref="nav"
+    ></detalinavbar>
+    <scroll class="content" ref="scroll" @scroll="contentscorll" :position="3">
       <detaliswiper :topimage="topimage"></detaliswiper>
       <detalibaseinfo :goods="goods"></detalibaseinfo>
       <detail-shop-info :shop="shop"></detail-shop-info>
-      <detail-goods-info :detail-info="detailInfo"></detail-goods-info>
-      <detail-param-info :param-info="goodsparam" ref="paraminfo"></detail-param-info>
-      <detail-comment-info :comment-info="commentinfo" ref="commentinfo"></detail-comment-info>
+      <detail-goods-info
+        :detail-info="detailInfo"
+        @imageload="imageload"
+      ></detail-goods-info>
+      <detail-param-info
+        :param-info="goodsparam"
+        ref="paraminfo"
+      ></detail-param-info>
+      <detail-comment-info
+        :comment-info="commentinfo"
+        ref="commentinfo"
+      ></detail-comment-info>
       <detail-recommend-info
         :recommend-list="recommendList"
         ref="recommendinfo"
       ></detail-recommend-info>
     </scroll>
+    <detail-bottom-bar></detail-bottom-bar>
+    <back-top @click="backclick" v-show="top"></back-top>
   </div>
 </template>
 
 <script>
-import scroll from '../../components/common/scroll/scroll.vue'
+import scroll from "../../components/common/scroll/scroll.vue";
 import detalinavbar from "../detali/childcomps/detalinavbar.vue";
 import detaliswiper from "./childcomps/detaliswiper.vue";
 import detalibaseinfo from "./childcomps/detalibaseinfo.vue";
@@ -26,6 +41,7 @@ import DetailGoodsInfo from "./childcomps/DetailGoodsInfo.vue";
 import DetailParamInfo from "./childcomps/DetailParamInfo.vue";
 import DetailCommentInfo from "./childcomps/DetailCommentInfo.vue";
 import DetailRecommendInfo from "./childcomps/DetailRecommendInfo.vue";
+import DetailBottomBar from './childcomps/DetailBottomBar.vue'
 
 import {
   getdetali,
@@ -35,6 +51,9 @@ import {
   comment,
   getRecommend,
 } from "../../network/detali";
+
+import { debouce } from "../../common/uuntils";
+import { backtop } from "../../common/mixin.js";
 
 export default {
   name: "detali",
@@ -48,7 +67,9 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     DetailRecommendInfo,
+    DetailBottomBar,
   },
+  mixins: [backtop],
   data() {
     return {
       iid: null,
@@ -60,7 +81,8 @@ export default {
       commentinfo: {},
       recommendList: [],
       themetopys: [],
-      getthemetopys:null,
+      getthemetopys: null,
+      index: 0,
     };
   },
 
@@ -69,15 +91,29 @@ export default {
       // console.log(index);
       this.$refs.scroll.scrollTo(0, -this.themetopys[index], 500);
     },
-
-  },
-  updated () {
-    this.themetopys=[];
-      this.themetopys.push(0);
-      this.themetopys.push(this.$refs.paraminfo.$el.offsetTop);
-      this.themetopys.push(this.$refs.commentinfo.$el.offsetTop);
-      this.themetopys.push(this.$refs.recommendinfo.$el.offsetTop);
-      console.log(this.themetopys);
+    imageload() {
+      // console.log('+++');
+      this.$refs.scroll.scroll.refresh();
+      this.getthemetopys();
+    },
+    contentscorll(position) {
+      // console.log(position);
+      this.topmixin(position);
+      const positionY = position.y;
+      // console.log(position);
+      for (let index = 0; index < this.themetopys.length; index++) {
+        if (
+          this.index !== index &&
+          ((index < this.themetopys.length - 1 &&
+            -positionY >= this.themetopys[index] &&
+            -positionY < this.themetopys[index + 1]) ||
+            -positionY >= this.themetopys[index])
+        ) {
+          this.index = index;
+          this.$refs.nav.currentindex = this.index;
+        }
+      }
+    },
   },
   created() {
     this.iid = this.$route.params.iid;
@@ -101,28 +137,20 @@ export default {
       if (data.rate.crate !== 0) {
         this.commentinfo = new comment(data.rate.list);
       }
-    //  this.getthemetopys=debouce(()=>{
-    //    this.themetopys=[];
-    //   this.themetopys.push(0);
-    //   this.themetopys.push(this.$refs.paraminfo.$el.offsetTop);
-    //   this.themetopys.push(this.$refs.commentinfo.$el.offsetTop);
-    //   this.themetopys.push(this.$refs.recommendinfo.$el.offsetTop);
-    //   console.log(this.themetopys);
-    //  })
     });
     getRecommend().then((res) => {
       this.recommendList = res.data.list;
       // console.log(this.recommendList);
       // console.log(res);
     });
-    // this.$nextTick(()=>{
-    //    this.themetopys=[];
-    //   this.themetopys.push(0);
-    //   this.themetopys.push(this.$refs.paraminfo.$el.offsetTop);
-    //   this.themetopys.push(this.$refs.commentinfo.$el.offsetTop);
-    //   this.themetopys.push(this.$refs.recommendinfo.$el.offsetTop);
-    //   console.log(this.themetopys);
-    // })
+    this.getthemetopys = debouce(() => {
+      this.themetopys = [];
+      this.themetopys.push(0);
+      this.themetopys.push(this.$refs.paraminfo.$el.offsetTop);
+      this.themetopys.push(this.$refs.commentinfo.$el.offsetTop);
+      this.themetopys.push(this.$refs.recommendinfo.$el.offsetTop);
+      // console.log(this.themetopys);
+    }, 1000);
   },
 };
 </script>
@@ -137,6 +165,6 @@ export default {
   background-color: #fff;
 }
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 58px);
 }
 </style>
