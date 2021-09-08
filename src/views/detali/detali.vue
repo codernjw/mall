@@ -5,6 +5,7 @@
       @titleclick="tmclick"
       ref="nav"
     ></detalinavbar>
+    <!-- <div>{{this.$store.state.cartlist}}</div> -->
     <scroll class="content" ref="scroll" @scroll="contentscorll" :position="3">
       <detaliswiper :topimage="topimage"></detaliswiper>
       <detalibaseinfo :goods="goods"></detalibaseinfo>
@@ -26,8 +27,9 @@
         ref="recommendinfo"
       ></detail-recommend-info>
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
     <back-top @click="backclick" v-show="top"></back-top>
+    <toast :message='message' :isshow='isshow'></toast>
   </div>
 </template>
 
@@ -41,7 +43,8 @@ import DetailGoodsInfo from "./childcomps/DetailGoodsInfo.vue";
 import DetailParamInfo from "./childcomps/DetailParamInfo.vue";
 import DetailCommentInfo from "./childcomps/DetailCommentInfo.vue";
 import DetailRecommendInfo from "./childcomps/DetailRecommendInfo.vue";
-import DetailBottomBar from './childcomps/DetailBottomBar.vue'
+import DetailBottomBar from "./childcomps/DetailBottomBar.vue";
+import Toast from '../../components/common/toast/Toast.vue'
 
 import {
   getdetali,
@@ -68,6 +71,7 @@ export default {
     DetailCommentInfo,
     DetailRecommendInfo,
     DetailBottomBar,
+    Toast,
   },
   mixins: [backtop],
   data() {
@@ -83,6 +87,8 @@ export default {
       themetopys: [],
       getthemetopys: null,
       index: 0,
+      message:'',
+      isshow:'false',
     };
   },
 
@@ -113,6 +119,25 @@ export default {
           this.$refs.nav.currentindex = this.index;
         }
       }
+    },
+    addToCart() {
+      const obj = {};
+      obj.image = this.topimage[0];
+      obj.title = this.goods.title;
+      obj.desc = this.goods.desc;
+      obj.price = this.goods.realPrice;
+      obj.iid = this.iid;
+      // console.log(obj);
+      this.$store.dispatch("addcart", obj).then((res)=>{
+        this.message = res;
+        this.isshow = true;
+        setTimeout(()=>{
+         this.isshow = false
+         this.message='';
+        },1500)
+        // console.log(res);
+      })
+      // console.log(this.$store.state.cartlist);
     },
   },
   created() {
@@ -165,6 +190,6 @@ export default {
   background-color: #fff;
 }
 .content {
-  height: calc(100% - 44px - 58px);
+  height: calc(100% - 44px - 558px);
 }
 </style>

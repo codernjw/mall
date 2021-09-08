@@ -13,5 +13,18 @@ export default {
 </script>
 
 <style>
-@import '../../../assets/css/navbar.css';
+/* @import '../../../assets/css/navbar.css'; */
+.navbar {
+    display: flex;
+    line-height: 44px;
+    text-align: center;
+}
+
+.left .right {
+    width: 60px;
+}
+
+.center {
+    flex: 1;
+}
 </style>

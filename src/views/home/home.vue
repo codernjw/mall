@@ -142,7 +142,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .home {
   color: aliceblue;
   /* position: fixed;
