@@ -22,7 +22,8 @@ props: {
 },
 computed: {
       getImg() {
-        return  this.goodslistitem.image || this.goodslistitem.show.img
+        return   this.goodslistitem.img || this.goodslistitem.image || this.goodslistitem.show.img || this.goodslistitem.img
+        // return this.goods.img || this.goods.image || this.goods.show.img
       }
     },
 methods: {

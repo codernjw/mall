@@ -1,6 +1,6 @@
 <template>
-  <div v-show="isshow">
-      <div class="toast">{{message}}</div>
+  <div  >
+      <div class="toast" v-show="isshow">{{message}}</div>
   </div>
 </template>
 

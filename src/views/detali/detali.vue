@@ -190,6 +190,6 @@ export default {
   background-color: #fff;
 }
 .content {
-  height: calc(100% - 44px - 558px);
+  height: calc(100% - 44px - 58px);
 }
 </style>

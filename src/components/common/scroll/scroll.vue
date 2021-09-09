@@ -16,6 +16,12 @@ BScroll.use(ObserveDom);
 export default {
   name: "scroll",
   props: {
+     data: {
+		    type: Array,
+        default: () => {
+          return []
+        }
+      },
     position: {
       type: Number,
       default: 0,
@@ -59,6 +65,11 @@ export default {
       this.scroll.finishPullUp();
     }
   },
+  watch: {
+		  data() {
+        setTimeout(this.refresh, 20)
+      }
+    }
 };
 </script>
 

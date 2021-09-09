@@ -1,43 +1,154 @@
 <template>
-  <div>
-    <h2>我是分类</h2>
-  </div>
+  <div id="category">
+    <!-- <nav-bar class="nav-bar"><div slot="center">商品分类</div></nav-bar> -->
+      <Navbar class="nav-bar">
+        <template v-slot:left> </template>
+        <template v-slot:center> 商品分类 </template>
+        <template v-slot:right> </template>
+      </Navbar>
+    <div class="content">
+      <tab-menu :categories="categories"
+                @selectItem="selectItem"></tab-menu>
+    <!-- <div class="content"> -->
+        <scroll id="tab-content" :data="[categoryData]">
+        <div>
+          <tab-content-category :subcategories="showSubcategory"></tab-content-category>
+          <tab-control :title="['综合', '新品', '销量']"
+                       @tabclick="tabClick"></tab-control>
+          <tab-content-detail :category-detail="showCategoryDetail"></tab-content-detail>
+        </div>
+      </scroll>
+      </div>
+    </div>
 </template>
 
 <script>
-// import BScroll from "better-scroll";
-// import Pullup from '@better-scroll/pull-up';
-// BScroll.use(Pullup);
-export default {
-  name: "category",
-//   data() {
-//     return {
-//       scroll: null,
-//     };
-//   },
-//   mounted() {
-//     this.scroll = new BScroll(".warpper", {
-//       probeType: 3,
-//       pullUpLoad: true,
-//     });
-//     this.scroll.on("scroll", (position) => {
-//       // console.log(position);
-//     });
-//     this.scroll.on("pullingUp", () => {
-//       console.log("上拉加载更多");
-//       // 执行一次上拉加载更多命令后，关闭上拉加载更多，然后又重新调用。
-//       setTimeout(()=>{
-//         this.scroll.finishPullUp();
-//       },2000)
-//     });
-//   },
-};
+  import Navbar from '../../components/common/navbar/Navbar.vue'
+
+  import TabMenu from './childComps/TabMenu'
+  import TabControl from '../../components/content/tabcontrol/TabControl.vue'
+  import scroll from '../../components/common/scroll/scroll.vue'
+  import TabContentCategory from './childComps/TabContentCategory'
+  import TabContentDetail from './childComps/TabContentDetail'
+
+  import {getCategory, getSubcategory, getCategoryDetail} from "../../network/category";
+  import {POP, SELL, NEW} from "../../common/const";
+  import {tabControlMixin} from "../../common/mixin";
+
+  export default {
+		name: "Category",
+    components: {
+		  Navbar,
+      TabMenu,
+      TabControl,
+      scroll,
+      TabContentCategory,
+      TabContentDetail
+    },
+    mixins: [tabControlMixin],
+    data() {
+		  return {
+		    categories: [],
+        categoryData: {
+        },
+        currentIndex: -1
+      }
+    },
+    created() {
+		  // 1.请求分类数据
+      this._getCategory()
+    },
+    computed: {
+		  showSubcategory() {
+		    if (this.currentIndex === -1) return {}
+        // console.log(this.categoryData[this.currentIndex].subcategories.list);
+        return this.categoryData[this.currentIndex].subcategories
+        
+      },
+      showCategoryDetail() {
+		    if (this.currentIndex === -1) return []
+        // console.log(this.categoryData[this.currentIndex].categoryDetail[this.currentType]);
+		    return this.categoryData[this.currentIndex].categoryDetail[this.currentType]
+      }
+    },
+    methods: {
+		  _getCategory() {
+		    getCategory().then(res => {
+		      // 1.获取分类数据
+		      this.categories = res.data.category.list
+          // 2.初始化每个类别的子数据
+          for (let i = 0; i < this.categories.length; i++) {
+            this.categoryData[i] = {
+              subcategories: {},
+              categoryDetail: {
+                'pop': [],
+                'new': [],
+                'sell': []
+              }
+            }
+          }
+          // 3.请求第一个分类的数据
+          this._getSubcategories(0)
+        })
+      },
+      _getSubcategories(index) {
+        this.currentIndex = index;
+		    const mailKey = this.categories[index].maitKey;
+        getSubcategory(mailKey).then(res => {
+          this.categoryData[index].subcategories = res.data
+          this.categoryData = {...this.categoryData}
+          this._getCategoryDetail(POP)
+          this._getCategoryDetail(SELL)
+          this._getCategoryDetail(NEW)
+        })
+      },
+      _getCategoryDetail(type) {
+		    // 1.获取请求的miniWallkey
+        const miniWallkey = this.categories[this.currentIndex].miniWallkey;
+        // 2.发送请求,传入miniWallkey和type
+		    getCategoryDetail(miniWallkey, type).then(res => {
+		      // 3.将获取的数据保存下来
+		      this.categoryData[this.currentIndex].categoryDetail[type] = res
+          this.categoryData = {...this.categoryData}
+        })
+      },
+      /**
+       * 事件响应相关的方法
+       */
+      selectItem(index) {
+        this._getSubcategories(index)
+      }
+    }
+	}
 </script>
 
-<style>
-/* .warpper {
-  height: 300px;
-  background-color: aquamarine;
-  overflow: hidden;
-} */
+<style scoped>
+  #category {
+    height: 100vh;
+  }
+
+  .nav-bar {
+    background-color: var(--color-tint);
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .content {
+    position:absolute;
+    left: 0;
+    right: 0;
+    top: 44px;
+    bottom: 49px;
+    display: flex;
+    /* height: calc(100vh - 44px); */
+    /* overflow: hidden; */
+  }
+  #tab-content {
+    /* height: calc(100vh - 44px); */
+     /* height: calc(100%); */
+   /* height: calc(100vh - 44px); */
+    height: 100%;
+    flex: 1;
+     /* overflow: hidden; */
+  }
 </style>
